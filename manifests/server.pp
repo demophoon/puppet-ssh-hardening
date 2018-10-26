@@ -67,17 +67,15 @@ class ssh_hardening::server (
   $allow_agent_forwarding = false,
   $max_auth_retries       = 2,
   $options                = {},
-) {
-
+  $ciphers                = $ssh_hardening::params::ciphers,
+  $macs                   = $ssh_hardening::params::macs,
+  $kex                    = $ssh_hardening::params::kex,
+  $priv_sep               = $ssh_hardening::params::priv_sep,
+) inherits ssh_hardening::params {
   $addressfamily = $ipv6_enabled ? {
     true  => 'any',
     false => 'inet',
   }
-
-  $ciphers = get_ssh_ciphers($::operatingsystem, $::operatingsystemrelease, $cbc_required)
-  $macs = get_ssh_macs($::operatingsystem, $::operatingsystemrelease, $weak_hmac)
-  $kex = get_ssh_kex($::operatingsystem, $::operatingsystemrelease, $weak_kex)
-  $priv_sep = use_privilege_separation($::operatingsystem, $::operatingsystemrelease)
 
   $permit_root_login = $allow_root_with_key ? {
     true  => 'without-password',
