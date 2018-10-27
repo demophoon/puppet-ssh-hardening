@@ -109,10 +109,6 @@ class ssh_hardening::client (
 
     # Never use host-based authentication. It can be exploited.
     'HostbasedAuthentication'   => 'no',
-    'RhostsRSAAuthentication'   => 'no',
-
-    # Enable RSA authentication via identity files.
-    'RSAAuthentication'         => 'yes',
 
     # Disable password-based authentication, it can allow for potentially
     # easier brute-force attacks.
@@ -138,7 +134,19 @@ class ssh_hardening::client (
     #VisualHostKey yes
   }
 
-  $merged_options = merge($ssh_options, $options)
+  if versioncmp($ssh_server_version_major, '7.6') == -1 {
+    $pre_76_options = {
+      # Never use host-based authentication. It can be exploited.
+      'RhostsRSAAuthentication' => 'no',
+      # Enable RSA authentication via identity files.
+      'RSAAuthentication'       => 'yes',
+    }
+    $final_ssh_options = merge($ssh_options, $pre_76_options)
+  } else {
+    $final_ssh_options = $ssh_options
+  }
+
+  $merged_options = merge($final_ssh_options, $options)
 
   class { 'ssh::client':
     storeconfigs_enabled => false,
