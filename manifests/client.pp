@@ -134,7 +134,9 @@ class ssh_hardening::client (
     #VisualHostKey yes
   }
 
-  if versioncmp($ssh_server_version_major, '7.6') == -1 {
+  if !defined('$ssh_server_version_major') {
+    $final_ssh_options = $ssh_options
+  } elsif versioncmp($ssh_server_version_major, '7.6') == -1 {
     $pre_76_options = {
       # Never use host-based authentication. It can be exploited.
       'RhostsRSAAuthentication' => 'no',
