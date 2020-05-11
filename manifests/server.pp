@@ -254,7 +254,7 @@ class ssh_hardening::server (
       #ChrootDirectory none
       #ChrootDirectory /home/%u
 
-      # Configuratoin, in case SFTP is used
+      # Configuration, in case SFTP is used
       ## override default of no subsystems
       ## Subsystem sftp /opt/app/openssh5/libexec/sftp-server
       #Subsystem sftp internal-sftp -l VERBOSE
