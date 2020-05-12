@@ -39,15 +39,16 @@ class ssh_hardening::client (
   $ports = [ 22 ],
   $options      = {},
   $ipv6_enabled = false,
-  $ciphers                = $ssh_hardening::params::ciphers,
-  $macs                   = $ssh_hardening::params::macs,
-  $kex                    = $ssh_hardening::params::kex,
-) inherits ssh_hardening::params {
+) {
   if $ipv6_enabled == true {
     $addressfamily = 'any'
   } else {
     $addressfamily = 'inet'
   }
+
+  $ciphers = get_ssh_ciphers($::operatingsystem, $::operatingsystemrelease, $cbc_required)
+  $macs = get_ssh_macs($::operatingsystem, $::operatingsystemrelease, $weak_hmac)
+  $kex = get_ssh_kex($::operatingsystem, $::operatingsystemrelease, $weak_kex)
 
   $ssh_options = {
     # Set the addressfamily according to IPv4 / IPv6 settings
